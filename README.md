@@ -74,16 +74,20 @@ Cerula/
    pip install -r requirements.txt
    ```
 
-4. Seed the database with sample data:
+4. Set up the database schema and seed data:
    ```bash
    python seed_data.py
    ```
 
-   This will create:
-   - 7 care team members (Health Coaches, BHCMs, Psychiatrists)
-   - 10 patients with various statuses
-   - Care team assignments
-   - 6 months of health screening data for each patient
+   This script will:
+   - Automatically create all database tables (if they don't exist)
+   - Seed the database with sample data:
+     - 7 care team members (Health Coaches, BHCMs, Psychiatrists)
+     - 10 patients with various statuses (active, inactive, discharged)
+     - Care team assignments linking members to patients
+     - 6 months of health screening data for each patient (60 screenings total)
+   
+   **Note**: The seed script is idempotent - it's safe to run multiple times. It only adds data that doesn't already exist, so you won't get duplicates.
 
 5. Start the backend server:
    ```bash
@@ -122,52 +126,178 @@ Cerula/
 5. **Manage Care Team**: On the patient detail page, assign or unassign care team members
 6. **View Health Screenings**: Health screening trends are displayed as a line chart on the patient detail page
 
-## API Endpoints
+## API Documentation
 
-### Patients
-- `GET /api/patients` - List patients (with pagination, search, filter)
-- `GET /api/patients/count` - Get total patient count
-- `GET /api/patients/{id}` - Get patient details
+The API is built with FastAPI and provides automatic interactive documentation:
+
+- **Swagger UI**: `http://localhost:8000/docs` (or your deployed URL + `/docs`)
+- **ReDoc**: `http://localhost:8000/redoc` (alternative documentation format)
+- **OpenAPI JSON**: `http://localhost:8000/openapi.json` (machine-readable schema)
+
+### API Endpoints
+
+#### Patients
+
+**List Patients**
+- `GET /api/patients` - List patients with pagination, search, and filtering
+  - Query Parameters:
+    - `skip` (int, default: 0) - Number of records to skip
+    - `limit` (int, default: 20, max: 100) - Number of records to return
+    - `search` (string, optional) - Search by name, email, or phone
+    - `status` (string, optional) - Filter by status: `active`, `inactive`, or `discharged`
+  - Response: Array of patient objects
+  - Example: `GET /api/patients?search=john&status=active&limit=10`
+
+**Get Patient Count**
+- `GET /api/patients/count` - Get total count of patients matching filters
+  - Query Parameters: Same as list patients (`search`, `status`)
+  - Response: `{"count": 10}`
+
+**Get Patient Details**
+- `GET /api/patients/{id}` - Get detailed patient information including care team and screenings
+  - Path Parameter: `id` (int) - Patient ID
+  - Response: Patient object with nested care_team_assignments and health_screenings
+
+**Create Patient**
 - `POST /api/patients` - Create a new patient
-- `PUT /api/patients/{id}` - Update patient
-- `DELETE /api/patients/{id}` - Delete patient
+  - Request Body: Patient object (JSON)
+    ```json
+    {
+      "first_name": "John",
+      "last_name": "Doe",
+      "email": "john.doe@example.com",
+      "date_of_birth": "1990-01-01",
+      "enrollment_date": "2024-01-01",
+      "status": "active",
+      "phone": "555-1234",
+      "address": "123 Main St",
+      "care_program": "Behavioral Health Program"
+    }
+    ```
+  - Response: Created patient object (201 Created)
 
-### Care Team Members
-- `GET /api/care-team-members` - List care team members (optional role filter)
+**Update Patient**
+- `PUT /api/patients/{id}` - Update patient information
+  - Path Parameter: `id` (int) - Patient ID
+  - Request Body: Partial patient object (all fields optional)
+  - Response: Updated patient object
+
+**Delete Patient**
+- `DELETE /api/patients/{id}` - Delete a patient
+  - Path Parameter: `id` (int) - Patient ID
+  - Response: 204 No Content
+
+#### Care Team Members
+
+**List Care Team Members**
+- `GET /api/care-team-members` - List all care team members
+  - Query Parameters:
+    - `role` (string, optional) - Filter by role: `Health Coach`, `Behavioral Health Care Manager`, or `Psychiatrist`
+  - Response: Array of care team member objects
+  - Example: `GET /api/care-team-members?role=Health Coach`
+
+**Get Care Team Member**
 - `GET /api/care-team-members/{id}` - Get care team member details
+  - Path Parameter: `id` (int) - Member ID
+  - Response: Care team member object
 
-### Care Team Assignments
-- `GET /api/patients/{patient_id}/care-team-assignments` - Get assignments for a patient
-- `POST /api/patients/{patient_id}/care-team-assignments` - Assign a member to a patient
-- `DELETE /api/patients/{patient_id}/care-team-assignments/{assignment_id}` - Unassign a member
+#### Care Team Assignments
 
-### Health Screenings
-- `GET /api/patients/{patient_id}/health-screenings` - Get health screening history
-- `GET /api/health-screenings/{id}` - Get a specific screening
+**Get Patient Assignments**
+- `GET /api/patients/{patient_id}/care-team-assignments` - Get all care team assignments for a patient
+  - Path Parameter: `patient_id` (int) - Patient ID
+  - Response: Array of assignment objects with nested care_team_member
+
+**Assign Care Team Member**
+- `POST /api/patients/{patient_id}/care-team-assignments` - Assign a care team member to a patient
+  - Path Parameter: `patient_id` (int) - Patient ID
+  - Request Body:
+    ```json
+    {
+      "care_team_member_id": 1,
+      "assigned_date": "2024-01-01"  // optional, defaults to today
+    }
+    ```
+  - Response: Created assignment object (201 Created)
+
+**Unassign Care Team Member**
+- `DELETE /api/patients/{patient_id}/care-team-assignments/{assignment_id}` - Remove an assignment
+  - Path Parameters:
+    - `patient_id` (int) - Patient ID
+    - `assignment_id` (int) - Assignment ID
+  - Response: 204 No Content
+
+#### Health Screenings
+
+**Get Patient Health Screenings**
+- `GET /api/patients/{patient_id}/health-screenings` - Get health screening history for a patient
+  - Path Parameter: `patient_id` (int) - Patient ID
+  - Response: Array of health screening objects, ordered by date (newest first)
+  - Each screening includes: `id`, `patient_id`, `screening_date`, `score` (0-10)
+
+**Get Health Screening**
+- `GET /api/health-screenings/{id}` - Get a specific health screening
+  - Path Parameter: `id` (int) - Screening ID
+  - Response: Health screening object
+
+### API Response Format
+
+All endpoints return JSON. Error responses follow this format:
+```json
+{
+  "detail": "Error message describing what went wrong"
+}
+```
+
+Common HTTP Status Codes:
+- `200 OK` - Successful GET request
+- `201 Created` - Successful POST request
+- `204 No Content` - Successful DELETE request
+- `400 Bad Request` - Invalid input/validation error
+- `404 Not Found` - Resource not found
+- `500 Internal Server Error` - Server error
+
+### Authentication
+
+Currently, the API does not require authentication. In production, you would add API keys or OAuth tokens.
 
 ## Design Decisions
 
 ### Database Schema
 
+The database schema is automatically created when you run the application or seed script using SQLAlchemy's `Base.metadata.create_all()`. No manual migrations are required for initial setup.
+
+**Database Setup Process:**
+1. Tables are created automatically on first run via `Base.metadata.create_all(bind=engine)`
+2. Seed data is populated via `seed_data.py` script
+3. For production (PostgreSQL), the same process applies - tables are created automatically
+
+**Schema Details:**
+
 **Patients Table**
-- Stores patient demographic information and enrollment details
-- Status enum: active, inactive, discharged
-- Email is unique and indexed for fast lookups
+- Primary Key: `id` (auto-incrementing integer)
+- Fields: `first_name`, `last_name`, `date_of_birth`, `email` (unique, indexed), `phone`, `address`, `enrollment_date`, `status` (enum), `care_program`
+- Status enum: `active`, `inactive`, `discharged`
+- Relationships: One-to-many with CareTeamAssignment, One-to-many with HealthScreening
 
 **Care Team Members Table**
-- Stores care team member information
-- Role enum: Health Coach, Behavioral Health Care Manager, Psychiatrist
-- Email is unique and indexed
+- Primary Key: `id` (auto-incrementing integer)
+- Fields: `first_name`, `last_name`, `email` (unique, indexed), `phone`, `role` (enum)
+- Role enum: `Health Coach`, `Behavioral Health Care Manager`, `Psychiatrist`
+- Relationships: One-to-many with CareTeamAssignment
 
 **Care Team Assignments Table**
-- Many-to-many relationship between patients and care team members
-- Includes assigned_date for tracking when assignments were made
-- Prevents duplicate assignments
+- Primary Key: `id` (auto-incrementing integer)
+- Foreign Keys: `patient_id` → Patients.id, `care_team_member_id` → CareTeamMembers.id
+- Fields: `assigned_date` (defaults to current date)
+- Unique Constraint: Prevents duplicate assignments (same patient + member combination)
+- Represents: Many-to-many relationship between patients and care team members
 
 **Health Screenings Table**
-- Stores monthly health screening scores (0-10 scale)
-- Linked to patients via foreign key
-- Screening date allows tracking over time
+- Primary Key: `id` (auto-incrementing integer)
+- Foreign Key: `patient_id` → Patients.id
+- Fields: `screening_date`, `score` (float, 0-10 scale)
+- Purpose: Tracks monthly behavioral health screening scores over time
 
 ### API Design
 
