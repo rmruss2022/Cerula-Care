@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_, func
 from typing import List, Optional
 from datetime import date, timedelta
+import os
 from app.database import get_db, engine, Base
 from app import models, schemas
 
@@ -17,15 +18,20 @@ app = FastAPI(
 )
 
 # CORS middleware
-# Add your Vercel frontend URL to allow_origins after deployment
+# Get allowed origins from environment variable or use defaults
+allowed_origins = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:3000,http://localhost:5173"
+).split(",")
+
+# Add Vercel frontend URL if provided
+vercel_url = os.getenv("VERCEL_FRONTEND_URL")
+if vercel_url:
+    allowed_origins.append(vercel_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:5173",
-        # Add your Vercel frontend URL here after deployment
-        # e.g., "https://your-app.vercel.app"
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
