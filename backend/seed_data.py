@@ -191,6 +191,215 @@ def seed_patients(db: Session):
             "status": models.PatientStatus.ACTIVE,
             "care_program": "Wellness Program"
         },
+        {
+            "first_name": "Christopher",
+            "last_name": "White",
+            "date_of_birth": date(1987, 3, 12),
+            "email": "christopher.white@email.com",
+            "phone": "555-1011",
+            "address": "852 Cherry St, Downtown, ST 77777",
+            "enrollment_date": date(2024, 1, 8),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Behavioral Health Program"
+        },
+        {
+            "first_name": "Amanda",
+            "last_name": "Harris",
+            "date_of_birth": date(1991, 7, 22),
+            "email": "amanda.harris@email.com",
+            "phone": "555-1012",
+            "address": "963 Walnut Ave, Uptown, ST 88888",
+            "enrollment_date": date(2023, 12, 15),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Chronic Care Management"
+        },
+        {
+            "first_name": "Daniel",
+            "last_name": "Martin",
+            "date_of_birth": date(1984, 11, 5),
+            "email": "daniel.martin@email.com",
+            "phone": "555-1013",
+            "address": "147 Oakwood Dr, Midtown, ST 99999",
+            "enrollment_date": date(2024, 3, 5),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Wellness Program"
+        },
+        {
+            "first_name": "Jennifer",
+            "last_name": "Thompson",
+            "date_of_birth": date(1989, 4, 18),
+            "email": "jennifer.thompson@email.com",
+            "phone": "555-1014",
+            "address": "258 Riverside Blvd, Waterfront, ST 10101",
+            "enrollment_date": date(2024, 2, 22),
+            "status": models.PatientStatus.INACTIVE,
+            "care_program": "Behavioral Health Program"
+        },
+        {
+            "first_name": "Michael",
+            "last_name": "Garcia",
+            "date_of_birth": date(1979, 9, 30),
+            "email": "michael.garcia@email.com",
+            "phone": "555-1015",
+            "address": "369 Parkview Ln, Greenway, ST 20202",
+            "enrollment_date": date(2023, 11, 20),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Chronic Care Management"
+        },
+        {
+            "first_name": "Sarah",
+            "last_name": "Martinez",
+            "date_of_birth": date(1994, 1, 14),
+            "email": "sarah.martinez@email.com",
+            "phone": "555-1016",
+            "address": "741 Hillcrest Rd, Highlands, ST 30303",
+            "enrollment_date": date(2024, 4, 1),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Wellness Program"
+        },
+        {
+            "first_name": "David",
+            "last_name": "Robinson",
+            "date_of_birth": date(1986, 6, 28),
+            "email": "david.robinson@email.com",
+            "phone": "555-1017",
+            "address": "852 Valley View Ct, Hillside, ST 40404",
+            "enrollment_date": date(2023, 10, 10),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Behavioral Health Program"
+        },
+        {
+            "first_name": "Emily",
+            "last_name": "Clark",
+            "date_of_birth": date(1992, 12, 8),
+            "email": "emily.clark@email.com",
+            "phone": "555-1018",
+            "address": "963 Sunset Blvd, Westside, ST 50505",
+            "enrollment_date": date(2024, 1, 30),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Chronic Care Management"
+        },
+        {
+            "first_name": "James",
+            "last_name": "Rodriguez",
+            "date_of_birth": date(1981, 5, 19),
+            "email": "james.rodriguez@email.com",
+            "phone": "555-1019",
+            "address": "147 Mountain View Dr, Northside, ST 60606",
+            "enrollment_date": date(2023, 9, 25),
+            "status": models.PatientStatus.DISCHARGED,
+            "care_program": "Behavioral Health Program"
+        },
+        {
+            "first_name": "Jessica",
+            "last_name": "Lewis",
+            "date_of_birth": date(1988, 8, 3),
+            "email": "jessica.lewis@email.com",
+            "phone": "555-1020",
+            "address": "258 Lakeview Ave, Lakeside, ST 70707",
+            "enrollment_date": date(2024, 2, 14),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Wellness Program"
+        },
+        {
+            "first_name": "Matthew",
+            "last_name": "Lee",
+            "date_of_birth": date(1983, 2, 25),
+            "email": "matthew.lee@email.com",
+            "phone": "555-1021",
+            "address": "369 Forest Park Way, Woodland, ST 80808",
+            "enrollment_date": date(2024, 3, 28),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Chronic Care Management"
+        },
+        {
+            "first_name": "Ashley",
+            "last_name": "Walker",
+            "date_of_birth": date(1990, 10, 11),
+            "email": "ashley.walker@email.com",
+            "phone": "555-1022",
+            "address": "741 Meadowbrook Ln, Meadowlands, ST 90909",
+            "enrollment_date": date(2023, 12, 5),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Behavioral Health Program"
+        },
+        {
+            "first_name": "Andrew",
+            "last_name": "Hall",
+            "date_of_birth": date(1985, 7, 17),
+            "email": "andrew.hall@email.com",
+            "phone": "555-1023",
+            "address": "852 Spring Garden St, Gardenview, ST 01010",
+            "enrollment_date": date(2024, 4, 10),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Wellness Program"
+        },
+        {
+            "first_name": "Lauren",
+            "last_name": "Allen",
+            "date_of_birth": date(1993, 3, 29),
+            "email": "lauren.allen@email.com",
+            "phone": "555-1024",
+            "address": "963 Brookside Dr, Brookside, ST 11111",
+            "enrollment_date": date(2024, 1, 18),
+            "status": models.PatientStatus.INACTIVE,
+            "care_program": "Chronic Care Management"
+        },
+        {
+            "first_name": "Ryan",
+            "last_name": "Young",
+            "date_of_birth": date(1987, 9, 6),
+            "email": "ryan.young@email.com",
+            "phone": "555-1025",
+            "address": "147 Countryside Rd, Countryside, ST 12121",
+            "enrollment_date": date(2023, 11, 12),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Behavioral Health Program"
+        },
+        {
+            "first_name": "Nicole",
+            "last_name": "King",
+            "date_of_birth": date(1991, 1, 23),
+            "email": "nicole.king@email.com",
+            "phone": "555-1026",
+            "address": "258 Fairview Ave, Fairview, ST 13131",
+            "enrollment_date": date(2024, 2, 28),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Wellness Program"
+        },
+        {
+            "first_name": "Kevin",
+            "last_name": "Wright",
+            "date_of_birth": date(1982, 6, 15),
+            "email": "kevin.wright@email.com",
+            "phone": "555-1027",
+            "address": "369 Bridgewater St, Bridgewater, ST 14141",
+            "enrollment_date": date(2024, 3, 15),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Chronic Care Management"
+        },
+        {
+            "first_name": "Michelle",
+            "last_name": "Lopez",
+            "date_of_birth": date(1989, 11, 2),
+            "email": "michelle.lopez@email.com",
+            "phone": "555-1028",
+            "address": "741 Stonebridge Way, Stonebridge, ST 15151",
+            "enrollment_date": date(2023, 10, 28),
+            "status": models.PatientStatus.ACTIVE,
+            "care_program": "Behavioral Health Program"
+        },
+        {
+            "first_name": "Brandon",
+            "last_name": "Hill",
+            "date_of_birth": date(1984, 4, 9),
+            "email": "brandon.hill@email.com",
+            "phone": "555-1029",
+            "address": "852 Windmill Dr, Windmill, ST 16161",
+            "enrollment_date": date(2024, 1, 5),
+            "status": models.PatientStatus.DISCHARGED,
+            "care_program": "Wellness Program"
+        },
     ]
     
     patients = []
@@ -250,6 +459,60 @@ def seed_care_team_assignments(db: Session, patients: list, care_team_members: l
         
         # Patient 10 (Barbara Jackson) - Active
         {"patient_id": 10, "member_email": "emily.rodriguez@cerula.com"},
+        
+        # Patient 11 (Christopher White) - Active
+        {"patient_id": 11, "member_email": "sarah.johnson@cerula.com"},
+        {"patient_id": 11, "member_email": "david.williams@cerula.com"},
+        
+        # Patient 12 (Amanda Harris) - Active
+        {"patient_id": 12, "member_email": "michael.chen@cerula.com"},
+        
+        # Patient 13 (Daniel Martin) - Active
+        {"patient_id": 13, "member_email": "emily.rodriguez@cerula.com"},
+        {"patient_id": 13, "member_email": "jessica.martinez@cerula.com"},
+        
+        # Patient 15 (Michael Garcia) - Active
+        {"patient_id": 15, "member_email": "sarah.johnson@cerula.com"},
+        {"patient_id": 15, "member_email": "robert.anderson@cerula.com"},
+        
+        # Patient 16 (Sarah Martinez) - Active
+        {"patient_id": 16, "member_email": "michael.chen@cerula.com"},
+        {"patient_id": 16, "member_email": "david.williams@cerula.com"},
+        
+        # Patient 17 (David Robinson) - Active
+        {"patient_id": 17, "member_email": "emily.rodriguez@cerula.com"},
+        
+        # Patient 18 (Emily Clark) - Active
+        {"patient_id": 18, "member_email": "sarah.johnson@cerula.com"},
+        {"patient_id": 18, "member_email": "lisa.thompson@cerula.com"},
+        
+        # Patient 20 (Jessica Lewis) - Active
+        {"patient_id": 20, "member_email": "michael.chen@cerula.com"},
+        
+        # Patient 21 (Matthew Lee) - Active
+        {"patient_id": 21, "member_email": "david.williams@cerula.com"},
+        {"patient_id": 21, "member_email": "jessica.martinez@cerula.com"},
+        
+        # Patient 22 (Ashley Walker) - Active
+        {"patient_id": 22, "member_email": "sarah.johnson@cerula.com"},
+        
+        # Patient 23 (Andrew Hall) - Active
+        {"patient_id": 23, "member_email": "emily.rodriguez@cerula.com"},
+        {"patient_id": 23, "member_email": "robert.anderson@cerula.com"},
+        
+        # Patient 25 (Ryan Young) - Active
+        {"patient_id": 25, "member_email": "michael.chen@cerula.com"},
+        {"patient_id": 25, "member_email": "david.williams@cerula.com"},
+        
+        # Patient 26 (Nicole King) - Active
+        {"patient_id": 26, "member_email": "sarah.johnson@cerula.com"},
+        
+        # Patient 27 (Kevin Wright) - Active
+        {"patient_id": 27, "member_email": "emily.rodriguez@cerula.com"},
+        
+        # Patient 28 (Michelle Lopez) - Active
+        {"patient_id": 28, "member_email": "jessica.martinez@cerula.com"},
+        {"patient_id": 28, "member_email": "lisa.thompson@cerula.com"},
     ]
     
     for assignment_data in assignments:
