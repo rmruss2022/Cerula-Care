@@ -273,7 +273,12 @@ def seed_care_team_assignments(db: Session, patients: list, care_team_members: l
 
 def seed_health_screenings(db: Session, patients: list):
     """Seed health screenings for the last 6 months for each patient"""
+    if not patients:
+        print("⚠️  No patients available, skipping health screenings")
+        return
+    
     today = date.today()
+    screenings_added = 0
     
     for patient in patients:
         # Generate screenings for the last 6 months (one per month)
@@ -299,18 +304,36 @@ def seed_health_screenings(db: Session, patients: list):
                     score=round(score, 1)
                 )
                 db.add(db_screening)
+                screenings_added += 1
     
     db.commit()
-    print("✓ Seeded health screenings (6 months per patient)")
+    print(f"✓ Seeded {screenings_added} health screenings (6 months per patient)")
 
 
 def main():
-    """Main seeding function"""
+    """Main seeding function - Safe and idempotent, never deletes existing data"""
     db = SessionLocal()
     try:
+        # Ensure tables exist
+        Base.metadata.create_all(bind=engine)
+        
         print("Starting database seeding...")
+        print("Note: This script is safe to run multiple times - it only adds missing data.")
+        
+        # Check existing data counts before seeding
+        existing_patients = db.query(models.Patient).count()
+        existing_members = db.query(models.CareTeamMember).count()
+        existing_assignments = db.query(models.CareTeamAssignment).count()
+        existing_screenings = db.query(models.HealthScreening).count()
+        
+        print(f"\nCurrent database state:")
+        print(f"  - Care team members: {existing_members}")
+        print(f"  - Patients: {existing_patients}")
+        print(f"  - Assignments: {existing_assignments}")
+        print(f"  - Screenings: {existing_screenings}")
         
         # Seed in order due to foreign key dependencies
+        # These functions check for existing data and skip if already present
         seed_care_team_members(db)
         care_team_members = db.query(models.CareTeamMember).all()
         
@@ -319,17 +342,31 @@ def main():
             # If patients already exist, fetch them
             patients = db.query(models.Patient).all()
         
-        seed_care_team_assignments(db, patients, care_team_members)
-        seed_health_screenings(db, patients)
+        # Only seed assignments and screenings if we have patients
+        if patients:
+            seed_care_team_assignments(db, patients, care_team_members)
+            seed_health_screenings(db, patients)
+        
+        # Final counts
+        final_patients = db.query(models.Patient).count()
+        final_members = db.query(models.CareTeamMember).count()
+        final_assignments = db.query(models.CareTeamAssignment).count()
+        final_screenings = db.query(models.HealthScreening).count()
         
         print("\n✓ Database seeding completed successfully!")
-        print(f"  - {len(care_team_members)} care team members")
-        print(f"  - {len(patients)} patients")
-        print(f"  - {len(db.query(models.CareTeamAssignment).all())} care team assignments")
-        print(f"  - {len(db.query(models.HealthScreening).all())} health screenings")
+        print(f"\nFinal database state:")
+        print(f"  - {final_members} care team members")
+        print(f"  - {final_patients} patients")
+        print(f"  - {final_assignments} care team assignments")
+        print(f"  - {final_screenings} health screenings")
+        
+        if final_patients == 0:
+            print("\n⚠️  WARNING: No patients found after seeding. Check database connection.")
         
     except Exception as e:
         print(f"\n✗ Error seeding database: {e}")
+        import traceback
+        print(traceback.format_exc())
         db.rollback()
         raise
     finally:

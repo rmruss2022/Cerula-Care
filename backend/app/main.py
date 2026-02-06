@@ -8,7 +8,7 @@ import os
 from app.database import get_db, engine, Base
 from app import models, schemas
 
-# Create tables
+# Create tables (only creates if they don't exist, never drops existing tables)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
