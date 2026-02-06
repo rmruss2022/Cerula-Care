@@ -269,6 +269,7 @@ def seed_database():
         import subprocess
         import sys
         import os
+        from app.database import SessionLocal
         
         # Get the backend directory path
         backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
