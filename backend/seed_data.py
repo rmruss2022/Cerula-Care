@@ -423,115 +423,122 @@ def seed_care_team_assignments(db: Session, patients: list, care_team_members: l
     # Get all care team members
     all_members = db.query(models.CareTeamMember).all()
     
-    # Assign care team members to patients
+    # Create a mapping of patient emails to patient objects for easy lookup
+    patient_by_email = {p.email: p for p in patients}
+    
+    # Assign care team members to patients using email lookup
     assignments = [
         # Patient 1 (John Smith) - Active
-        {"patient_id": 1, "member_email": "sarah.johnson@cerula.com"},
-        {"patient_id": 1, "member_email": "david.williams@cerula.com"},
-        {"patient_id": 1, "member_email": "robert.anderson@cerula.com"},
+        {"patient_email": "john.smith@email.com", "member_email": "sarah.johnson@cerula.com"},
+        {"patient_email": "john.smith@email.com", "member_email": "david.williams@cerula.com"},
+        {"patient_email": "john.smith@email.com", "member_email": "robert.anderson@cerula.com"},
         
         # Patient 2 (Jane Doe) - Active
-        {"patient_id": 2, "member_email": "michael.chen@cerula.com"},
-        {"patient_id": 2, "member_email": "jessica.martinez@cerula.com"},
+        {"patient_email": "jane.doe@email.com", "member_email": "michael.chen@cerula.com"},
+        {"patient_email": "jane.doe@email.com", "member_email": "jessica.martinez@cerula.com"},
         
         # Patient 3 (Robert Brown) - Active
-        {"patient_id": 3, "member_email": "emily.rodriguez@cerula.com"},
-        {"patient_id": 3, "member_email": "david.williams@cerula.com"},
+        {"patient_email": "robert.brown@email.com", "member_email": "emily.rodriguez@cerula.com"},
+        {"patient_email": "robert.brown@email.com", "member_email": "david.williams@cerula.com"},
         
         # Patient 4 (Maria Garcia) - Active
-        {"patient_id": 4, "member_email": "sarah.johnson@cerula.com"},
+        {"patient_email": "maria.garcia@email.com", "member_email": "sarah.johnson@cerula.com"},
         
         # Patient 5 (James Wilson) - Inactive
-        {"patient_id": 5, "member_email": "michael.chen@cerula.com"},
+        {"patient_email": "james.wilson@email.com", "member_email": "michael.chen@cerula.com"},
         
         # Patient 7 (William Taylor) - Active
-        {"patient_id": 7, "member_email": "emily.rodriguez@cerula.com"},
-        {"patient_id": 7, "member_email": "jessica.martinez@cerula.com"},
-        {"patient_id": 7, "member_email": "lisa.thompson@cerula.com"},
+        {"patient_email": "william.taylor@email.com", "member_email": "emily.rodriguez@cerula.com"},
+        {"patient_email": "william.taylor@email.com", "member_email": "jessica.martinez@cerula.com"},
+        {"patient_email": "william.taylor@email.com", "member_email": "lisa.thompson@cerula.com"},
         
         # Patient 8 (Linda Anderson) - Active
-        {"patient_id": 8, "member_email": "sarah.johnson@cerula.com"},
-        {"patient_id": 8, "member_email": "robert.anderson@cerula.com"},
+        {"patient_email": "linda.anderson@email.com", "member_email": "sarah.johnson@cerula.com"},
+        {"patient_email": "linda.anderson@email.com", "member_email": "robert.anderson@cerula.com"},
         
         # Patient 9 (Richard Thomas) - Active
-        {"patient_id": 9, "member_email": "michael.chen@cerula.com"},
-        {"patient_id": 9, "member_email": "david.williams@cerula.com"},
+        {"patient_email": "richard.thomas@email.com", "member_email": "michael.chen@cerula.com"},
+        {"patient_email": "richard.thomas@email.com", "member_email": "david.williams@cerula.com"},
         
         # Patient 10 (Barbara Jackson) - Active
-        {"patient_id": 10, "member_email": "emily.rodriguez@cerula.com"},
+        {"patient_email": "barbara.jackson@email.com", "member_email": "emily.rodriguez@cerula.com"},
         
         # Patient 11 (Christopher White) - Active
-        {"patient_id": 11, "member_email": "sarah.johnson@cerula.com"},
-        {"patient_id": 11, "member_email": "david.williams@cerula.com"},
+        {"patient_email": "christopher.white@email.com", "member_email": "sarah.johnson@cerula.com"},
+        {"patient_email": "christopher.white@email.com", "member_email": "david.williams@cerula.com"},
         
         # Patient 12 (Amanda Harris) - Active
-        {"patient_id": 12, "member_email": "michael.chen@cerula.com"},
+        {"patient_email": "amanda.harris@email.com", "member_email": "michael.chen@cerula.com"},
         
         # Patient 13 (Daniel Martin) - Active
-        {"patient_id": 13, "member_email": "emily.rodriguez@cerula.com"},
-        {"patient_id": 13, "member_email": "jessica.martinez@cerula.com"},
+        {"patient_email": "daniel.martin@email.com", "member_email": "emily.rodriguez@cerula.com"},
+        {"patient_email": "daniel.martin@email.com", "member_email": "jessica.martinez@cerula.com"},
         
         # Patient 15 (Michael Garcia) - Active
-        {"patient_id": 15, "member_email": "sarah.johnson@cerula.com"},
-        {"patient_id": 15, "member_email": "robert.anderson@cerula.com"},
+        {"patient_email": "michael.garcia@email.com", "member_email": "sarah.johnson@cerula.com"},
+        {"patient_email": "michael.garcia@email.com", "member_email": "robert.anderson@cerula.com"},
         
         # Patient 16 (Sarah Martinez) - Active
-        {"patient_id": 16, "member_email": "michael.chen@cerula.com"},
-        {"patient_id": 16, "member_email": "david.williams@cerula.com"},
+        {"patient_email": "sarah.martinez@email.com", "member_email": "michael.chen@cerula.com"},
+        {"patient_email": "sarah.martinez@email.com", "member_email": "david.williams@cerula.com"},
         
         # Patient 17 (David Robinson) - Active
-        {"patient_id": 17, "member_email": "emily.rodriguez@cerula.com"},
+        {"patient_email": "david.robinson@email.com", "member_email": "emily.rodriguez@cerula.com"},
         
         # Patient 18 (Emily Clark) - Active
-        {"patient_id": 18, "member_email": "sarah.johnson@cerula.com"},
-        {"patient_id": 18, "member_email": "lisa.thompson@cerula.com"},
+        {"patient_email": "emily.clark@email.com", "member_email": "sarah.johnson@cerula.com"},
+        {"patient_email": "emily.clark@email.com", "member_email": "lisa.thompson@cerula.com"},
         
         # Patient 20 (Jessica Lewis) - Active
-        {"patient_id": 20, "member_email": "michael.chen@cerula.com"},
+        {"patient_email": "jessica.lewis@email.com", "member_email": "michael.chen@cerula.com"},
         
         # Patient 21 (Matthew Lee) - Active
-        {"patient_id": 21, "member_email": "david.williams@cerula.com"},
-        {"patient_id": 21, "member_email": "jessica.martinez@cerula.com"},
+        {"patient_email": "matthew.lee@email.com", "member_email": "david.williams@cerula.com"},
+        {"patient_email": "matthew.lee@email.com", "member_email": "jessica.martinez@cerula.com"},
         
         # Patient 22 (Ashley Walker) - Active
-        {"patient_id": 22, "member_email": "sarah.johnson@cerula.com"},
+        {"patient_email": "ashley.walker@email.com", "member_email": "sarah.johnson@cerula.com"},
         
         # Patient 23 (Andrew Hall) - Active
-        {"patient_id": 23, "member_email": "emily.rodriguez@cerula.com"},
-        {"patient_id": 23, "member_email": "robert.anderson@cerula.com"},
+        {"patient_email": "andrew.hall@email.com", "member_email": "emily.rodriguez@cerula.com"},
+        {"patient_email": "andrew.hall@email.com", "member_email": "robert.anderson@cerula.com"},
         
         # Patient 25 (Ryan Young) - Active
-        {"patient_id": 25, "member_email": "michael.chen@cerula.com"},
-        {"patient_id": 25, "member_email": "david.williams@cerula.com"},
+        {"patient_email": "ryan.young@email.com", "member_email": "michael.chen@cerula.com"},
+        {"patient_email": "ryan.young@email.com", "member_email": "david.williams@cerula.com"},
         
         # Patient 26 (Nicole King) - Active
-        {"patient_id": 26, "member_email": "sarah.johnson@cerula.com"},
+        {"patient_email": "nicole.king@email.com", "member_email": "sarah.johnson@cerula.com"},
         
         # Patient 27 (Kevin Wright) - Active
-        {"patient_id": 27, "member_email": "emily.rodriguez@cerula.com"},
+        {"patient_email": "kevin.wright@email.com", "member_email": "emily.rodriguez@cerula.com"},
         
         # Patient 28 (Michelle Lopez) - Active
-        {"patient_id": 28, "member_email": "jessica.martinez@cerula.com"},
-        {"patient_id": 28, "member_email": "lisa.thompson@cerula.com"},
+        {"patient_email": "michelle.lopez@email.com", "member_email": "jessica.martinez@cerula.com"},
+        {"patient_email": "michelle.lopez@email.com", "member_email": "lisa.thompson@cerula.com"},
     ]
     
+    assignments_added = 0
     for assignment_data in assignments:
+        patient = patient_by_email.get(assignment_data["patient_email"])
         member = next((m for m in all_members if m.email == assignment_data["member_email"]), None)
-        if member:
+        
+        if patient and member:
             existing = db.query(models.CareTeamAssignment).filter(
-                models.CareTeamAssignment.patient_id == assignment_data["patient_id"],
+                models.CareTeamAssignment.patient_id == patient.id,
                 models.CareTeamAssignment.care_team_member_id == member.id
             ).first()
             if not existing:
                 db_assignment = models.CareTeamAssignment(
-                    patient_id=assignment_data["patient_id"],
+                    patient_id=patient.id,
                     care_team_member_id=member.id,
                     assigned_date=date.today() - timedelta(days=random.randint(1, 90))
                 )
                 db.add(db_assignment)
+                assignments_added += 1
     
     db.commit()
-    print("✓ Seeded care team assignments")
+    print(f"✓ Seeded {assignments_added} care team assignments")
 
 
 def seed_health_screenings(db: Session, patients: list):
