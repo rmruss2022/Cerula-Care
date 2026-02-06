@@ -13,7 +13,6 @@ const PatientList = () => {
   const [statusFilter, setStatusFilter] = useState<PatientStatus | ''>('')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPatients, setTotalPatients] = useState(0)
-  const [showCreateModal, setShowCreateModal] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
 
   const patientsPerPage = 20

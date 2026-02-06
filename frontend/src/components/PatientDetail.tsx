@@ -4,7 +4,7 @@ import { getPatient, updatePatient, createPatient } from '../api/patients'
 import { getPatientCareTeamAssignments, assignCareTeamMember, unassignCareTeamMember } from '../api/careTeam'
 import { getCareTeamMembers } from '../api/careTeam'
 import { getPatientHealthScreenings } from '../api/healthScreenings'
-import { PatientDetail as PatientDetailType, CareTeamMember, CareTeamAssignment, HealthScreening, PatientStatus, CareTeamRole } from '../types'
+import { PatientDetail as PatientDetailType, CareTeamMember, CareTeamAssignment, HealthScreening, PatientStatus } from '../types'
 import HealthScreeningChart from './HealthScreeningChart'
 import './PatientDetail.css'
 

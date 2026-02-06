@@ -20,12 +20,6 @@ const HealthScreeningChart = ({ screenings }: HealthScreeningChartProps) => {
       }))
   }, [screenings])
 
-  const getScoreColor = (score: number) => {
-    if (score >= 7) return '#dc3545' // High (red)
-    if (score >= 4) return '#ffc107' // Medium (yellow)
-    return '#28a745' // Low (green)
-  }
-
   const averageScore = useMemo(() => {
     if (screenings.length === 0) return 0
     const sum = screenings.reduce((acc, s) => acc + s.score, 0)
