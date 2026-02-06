@@ -261,6 +261,49 @@ def get_health_screening(screening_id: int, db: Session = Depends(get_db)):
     return screening
 
 
+@app.post("/api/admin/seed")
+def seed_database():
+    """Seed the database with sample data. Only use in development/staging."""
+    try:
+        # Import the main function from seed_data
+        import subprocess
+        import sys
+        import os
+        
+        # Get the backend directory path
+        backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        seed_script = os.path.join(backend_dir, "seed_data.py")
+        
+        # Run the seed script
+        result = subprocess.run(
+            [sys.executable, seed_script],
+            cwd=backend_dir,
+            capture_output=True,
+            text=True,
+            timeout=60
+        )
+        
+        if result.returncode != 0:
+            raise Exception(f"Seed script failed: {result.stderr}")
+        
+        # Get counts from database
+        seed_db = SessionLocal()
+        try:
+            return {
+                "message": "Database seeded successfully",
+                "output": result.stdout,
+                "care_team_members": seed_db.query(models.CareTeamMember).count(),
+                "patients": seed_db.query(models.Patient).count(),
+                "assignments": seed_db.query(models.CareTeamAssignment).count(),
+                "screenings": seed_db.query(models.HealthScreening).count()
+            }
+        finally:
+            seed_db.close()
+    except Exception as e:
+        import traceback
+        raise HTTPException(status_code=500, detail=f"Error seeding database: {str(e)}\n{traceback.format_exc()}")
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
