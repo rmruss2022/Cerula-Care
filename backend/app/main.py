@@ -38,6 +38,14 @@ app.add_middleware(
 )
 
 
+# Root endpoint - redirect to API docs
+@app.get("/")
+def root():
+    """Root endpoint - redirects to API documentation"""
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/docs")
+
+
 # Patient endpoints
 @app.get("/api/patients", response_model=List[schemas.PatientResponse])
 def get_patients(
@@ -93,7 +101,7 @@ def get_patients_count(
 @app.get("/api/patients/{patient_id}", response_model=schemas.PatientDetailResponse)
 def get_patient(patient_id: int, db: Session = Depends(get_db)):
     """Get detailed patient information"""
-    patient = db.query(models.Patient).filter(models.Patient.id == patient_id).first()
+    patient = db.get(models.Patient, patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
     return patient
