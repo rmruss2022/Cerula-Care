@@ -1,7 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 body {
@@ -11,10 +15,29 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f5f5f5;
-  color: #333;
+  color: #1f2937;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Custom colors to match original design */
+.status-badge-active {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 0.25rem 0.75rem;
+}
+
+.status-badge-inactive {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 0.25rem 0.75rem;
+}
+
+.status-badge-discharged {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 0.25rem 0.75rem;
 }

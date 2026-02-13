@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { HealthScreening } from '../types'
 import { format, parseISO } from 'date-fns'
-import './HealthScreeningChart.css'
 
 interface HealthScreeningChartProps {
   screenings: HealthScreening[]
@@ -38,20 +37,33 @@ const HealthScreeningChart = ({ screenings }: HealthScreeningChartProps) => {
     return diff < 0 ? 'improving' : 'worsening'
   }, [screenings])
 
+  const getTrendColor = (trend: string) => {
+    switch (trend) {
+      case 'improving':
+        return 'text-[#28a745]'
+      case 'worsening':
+        return 'text-[#dc3545]'
+      case 'stable':
+        return 'text-[#6c757d]'
+      default:
+        return 'text-[#6c757d]'
+    }
+  }
+
   return (
-    <div className="health-screening-chart">
-      <div className="chart-stats">
-        <div className="stat-item">
-          <span className="stat-label">Average Score:</span>
-          <span className="stat-value">{averageScore.toFixed(1)}</span>
+    <div className="mb-8">
+      <div className="flex gap-8 mb-6 p-4 bg-[#f8f9fa] rounded md:flex-col md:gap-4">
+        <div className="flex flex-col gap-1">
+          <span className="text-sm text-[#6c757d]">Average Score:</span>
+          <span className="text-xl font-semibold text-[#2c3e50]">{averageScore.toFixed(1)}</span>
         </div>
-        <div className="stat-item">
-          <span className="stat-label">Trend:</span>
-          <span className={`stat-value trend-${trend}`}>{trend}</span>
+        <div className="flex flex-col gap-1">
+          <span className="text-sm text-[#6c757d]">Trend:</span>
+          <span className={`text-xl font-semibold ${getTrendColor(trend)}`}>{trend}</span>
         </div>
-        <div className="stat-item">
-          <span className="stat-label">Total Screenings:</span>
-          <span className="stat-value">{screenings.length}</span>
+        <div className="flex flex-col gap-1">
+          <span className="text-sm text-[#6c757d]">Total Screenings:</span>
+          <span className="text-xl font-semibold text-[#2c3e50]">{screenings.length}</span>
         </div>
       </div>
       <ResponsiveContainer width="100%" height={300}>
@@ -84,8 +96,8 @@ const HealthScreeningChart = ({ screenings }: HealthScreeningChartProps) => {
           />
         </LineChart>
       </ResponsiveContainer>
-      <div className="chart-legend-info">
-        <p>
+      <div className="mt-4 p-4 bg-[#e7f3ff] border-l-4 border-[#007bff] rounded">
+        <p className="m-0 text-sm text-[#495057]">
           <strong>Score Interpretation:</strong> Lower scores indicate improvement. Scores range from 0-10, with
           higher scores indicating more severe symptoms.
         </p>

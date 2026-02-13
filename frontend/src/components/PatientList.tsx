@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getPatients, deletePatient } from '../api/patients'
 import { Patient, PatientStatus } from '../types'
-import './PatientList.css'
 
 const PatientList = () => {
   const navigate = useNavigate()
@@ -71,42 +70,46 @@ const PatientList = () => {
   const totalPages = Math.ceil(totalPatients / patientsPerPage)
 
   const getStatusBadgeClass = (status: PatientStatus) => {
+    const baseClasses = 'inline-block rounded-xl text-sm font-medium capitalize'
     switch (status) {
       case PatientStatus.ACTIVE:
-        return 'status-badge active'
+        return `${baseClasses} status-badge-active`
       case PatientStatus.INACTIVE:
-        return 'status-badge inactive'
+        return `${baseClasses} status-badge-inactive`
       case PatientStatus.DISCHARGED:
-        return 'status-badge discharged'
+        return `${baseClasses} status-badge-discharged`
       default:
-        return 'status-badge'
+        return baseClasses
     }
   }
 
   return (
-    <div className="patient-list">
-      <div className="patient-list-header">
-        <h2>Patients</h2>
-        <button className="btn btn-primary" onClick={() => navigate('/patients/new')}>
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-[2rem] text-[#2c3e50]">Patients</h2>
+        <button 
+          className="px-4 py-2 bg-[#007bff] text-white rounded border-none text-base cursor-pointer transition-colors duration-200 hover:bg-[#0056b3] disabled:opacity-50 disabled:cursor-not-allowed" 
+          onClick={() => navigate('/patients/new')}
+        >
           + Add Patient
         </button>
       </div>
 
-      <div className="patient-list-filters">
-        <div className="search-box">
+      <div className="flex gap-4 mb-6 items-center">
+        <div className="flex-1">
           <input
             type="text"
             placeholder="Search by name, email, or phone..."
             value={search}
             onChange={handleSearchChange}
-            className="search-input"
+            className="w-full rounded border border-[#ddd] text-base p-3"
           />
         </div>
-        <div className="filter-box">
+        <div className="min-w-[200px]">
           <select
             value={statusFilter}
             onChange={handleStatusFilterChange}
-            className="filter-select"
+            className="w-full rounded border border-[#ddd] bg-white text-base p-3"
           >
             <option value="">All Statuses</option>
             <option value={PatientStatus.ACTIVE}>Active</option>
@@ -116,25 +119,29 @@ const PatientList = () => {
         </div>
       </div>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && (
+        <div className="rounded p-4 mb-4 border text-[#dc3545] bg-[#f8d7da] border-[#f5c6cb]">
+          {error}
+        </div>
+      )}
 
       {loading ? (
-        <div className="loading">Loading patients...</div>
+        <div className="text-center py-12 text-[#6c757d]">Loading patients...</div>
       ) : patients.length === 0 ? (
-        <div className="empty-state">No patients found</div>
+        <div className="text-center py-12 text-[#6c757d]">No patients found</div>
       ) : (
         <>
-          <div className="patient-table-container">
-            <table className="patient-table">
-              <thead>
+          <div className="overflow-x-auto bg-white rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+            <table className="w-full border-collapse">
+              <thead className="bg-[#f8f9fa]">
                 <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Status</th>
-                  <th>Enrollment Date</th>
-                  <th>Care Program</th>
-                  <th>Actions</th>
+                  <th className="p-4 text-left font-semibold text-[#495057] border-b-2 border-[#dee2e6]">Name</th>
+                  <th className="p-4 text-left font-semibold text-[#495057] border-b-2 border-[#dee2e6]">Email</th>
+                  <th className="p-4 text-left font-semibold text-[#495057] border-b-2 border-[#dee2e6]">Phone</th>
+                  <th className="p-4 text-left font-semibold text-[#495057] border-b-2 border-[#dee2e6]">Status</th>
+                  <th className="p-4 text-left font-semibold text-[#495057] border-b-2 border-[#dee2e6]">Enrollment Date</th>
+                  <th className="p-4 text-left font-semibold text-[#495057] border-b-2 border-[#dee2e6]">Care Program</th>
+                  <th className="p-4 text-left font-semibold text-[#495057] border-b-2 border-[#dee2e6]">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -142,23 +149,23 @@ const PatientList = () => {
                   <tr
                     key={patient.id}
                     onClick={() => navigate(`/patients/${patient.id}`)}
-                    className="patient-row"
+                    className="cursor-pointer transition-colors duration-200 border-b border-[#dee2e6] hover:bg-[#f8f9fa]"
                   >
-                    <td>
+                    <td className="p-4">
                       {patient.first_name} {patient.last_name}
                     </td>
-                    <td>{patient.email}</td>
-                    <td>{patient.phone || '—'}</td>
-                    <td>
+                    <td className="p-4">{patient.email}</td>
+                    <td className="p-4">{patient.phone || '—'}</td>
+                    <td className="p-4">
                       <span className={getStatusBadgeClass(patient.status)}>
                         {patient.status}
                       </span>
                     </td>
-                    <td>{new Date(patient.enrollment_date).toLocaleDateString()}</td>
-                    <td>{patient.care_program || '—'}</td>
-                    <td onClick={(e) => e.stopPropagation()}>
+                    <td className="p-4">{new Date(patient.enrollment_date).toLocaleDateString()}</td>
+                    <td className="p-4">{patient.care_program || '—'}</td>
+                    <td className="p-4" onClick={(e) => e.stopPropagation()}>
                       <button
-                        className="btn btn-danger btn-sm"
+                        className="px-2 py-1 bg-[#dc3545] text-white rounded border-none text-sm cursor-pointer transition-colors duration-200 hover:bg-[#c82333] disabled:opacity-50 disabled:cursor-not-allowed"
                         onClick={(e) => handleDelete(patient.id, e)}
                         disabled={deletingId === patient.id}
                       >
@@ -172,19 +179,19 @@ const PatientList = () => {
           </div>
 
           {totalPages > 1 && (
-            <div className="pagination">
+            <div className="flex justify-center items-center gap-4 mt-8">
               <button
-                className="btn btn-secondary"
+                className="px-4 py-2 bg-[#6c757d] text-white rounded border-none text-base cursor-pointer transition-colors duration-200 hover:bg-[#5a6268] disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
               >
                 Previous
               </button>
-              <span className="pagination-info">
+              <span className="text-sm text-[#6c757d]">
                 Page {currentPage} of {totalPages} ({totalPatients} total)
               </span>
               <button
-                className="btn btn-secondary"
+                className="px-4 py-2 bg-[#6c757d] text-white rounded border-none text-base cursor-pointer transition-colors duration-200 hover:bg-[#5a6268] disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
               >

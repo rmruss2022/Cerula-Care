@@ -6,7 +6,6 @@ import { getCareTeamMembers } from '../api/careTeam'
 import { getPatientHealthScreenings } from '../api/healthScreenings'
 import { PatientDetail as PatientDetailType, CareTeamMember, CareTeamAssignment, HealthScreening, PatientStatus } from '../types'
 import HealthScreeningChart from './HealthScreeningChart'
-import './PatientDetail.css'
 
 const PatientDetail = () => {
   const { id } = useParams<{ id: string }>()
@@ -126,101 +125,139 @@ const PatientDetail = () => {
     return availableMembers.filter(m => !assignedIds.has(m.id))
   }
 
+  const getStatusBadgeClass = (status?: PatientStatus) => {
+    const baseClasses = 'inline-block px-3 py-1 rounded-xl text-sm font-medium capitalize'
+    switch (status) {
+      case PatientStatus.ACTIVE:
+        return `${baseClasses} status-badge-active`
+      case PatientStatus.INACTIVE:
+        return `${baseClasses} status-badge-inactive`
+      case PatientStatus.DISCHARGED:
+        return `${baseClasses} status-badge-discharged`
+      default:
+        return baseClasses
+    }
+  }
+
+  const getScoreClass = (score: number) => {
+    if (score >= 7) return 'text-[#dc3545] font-semibold'
+    if (score >= 4) return 'text-[#ffc107] font-semibold'
+    return 'text-[#28a745] font-semibold'
+  }
+
   if (loading) {
-    return <div className="loading">Loading patient details...</div>
+    return <div className="text-center py-12 text-[#6c757d]">Loading patient details...</div>
   }
 
   return (
-    <div className="patient-detail">
-      <div className="patient-detail-header">
-        <button className="btn btn-secondary" onClick={() => navigate('/')}>
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-8">
+        <button 
+          className="px-4 py-2 bg-[#6c757d] text-white rounded border-none text-base cursor-pointer transition-colors duration-200 hover:bg-[#5a6268]" 
+          onClick={() => navigate('/')}
+        >
           ← Back to Patients
         </button>
         {!isNew && !isEditing && (
-          <button className="btn btn-primary" onClick={() => setIsEditing(true)}>
+          <button 
+            className="px-4 py-2 bg-[#007bff] text-white rounded border-none text-base cursor-pointer transition-colors duration-200 hover:bg-[#0056b3]" 
+            onClick={() => setIsEditing(true)}
+          >
             Edit Patient
           </button>
         )}
       </div>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && (
+        <div className="text-[#dc3545] bg-[#f8d7da] border border-[#f5c6cb] rounded p-4 mb-4">
+          {error}
+        </div>
+      )}
 
-      <div className="patient-detail-content">
-        <div className="patient-info-card">
-          <h2>{isNew ? 'New Patient' : `${patient.first_name} ${patient.last_name}`}</h2>
+      <div className="flex flex-col gap-8">
+        <div className="bg-white rounded-lg p-8 shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+          <h2 className="mb-6 text-[#2c3e50]">{isNew ? 'New Patient' : `${patient.first_name} ${patient.last_name}`}</h2>
           
           {isEditing ? (
-            <div className="patient-form">
-              <div className="form-row">
-                <div className="form-group">
-                  <label>First Name *</label>
+            <div className="flex flex-col gap-4">
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-1">
+                <div className="flex flex-col gap-2">
+                  <label className="font-medium text-[#495057]">First Name *</label>
                   <input
                     type="text"
+                    className="border border-[#ddd] rounded text-base p-3"
                     value={patient.first_name || ''}
                     onChange={(e) => setPatient({ ...patient, first_name: e.target.value })}
                   />
                 </div>
-                <div className="form-group">
-                  <label>Last Name *</label>
+                <div className="flex flex-col gap-2">
+                  <label className="font-medium text-[#495057]">Last Name *</label>
                   <input
                     type="text"
+                    className="border border-[#ddd] rounded text-base p-3"
                     value={patient.last_name || ''}
                     onChange={(e) => setPatient({ ...patient, last_name: e.target.value })}
                   />
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Email *</label>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-1">
+                <div className="flex flex-col gap-2">
+                  <label className="font-medium text-[#495057]">Email *</label>
                   <input
                     type="email"
+                    className="border border-[#ddd] rounded text-base p-3"
                     value={patient.email || ''}
                     onChange={(e) => setPatient({ ...patient, email: e.target.value })}
                   />
                 </div>
-                <div className="form-group">
-                  <label>Phone</label>
+                <div className="flex flex-col gap-2">
+                  <label className="font-medium text-[#495057]">Phone</label>
                   <input
                     type="tel"
+                    className="border border-[#ddd] rounded text-base p-3"
                     value={patient.phone || ''}
                     onChange={(e) => setPatient({ ...patient, phone: e.target.value })}
                   />
                 </div>
               </div>
 
-              <div className="form-group">
-                <label>Address</label>
+              <div className="flex flex-col gap-2">
+                <label className="font-medium text-[#495057]">Address</label>
                 <input
                   type="text"
+                  className="border border-[#ddd] rounded text-base p-3"
                   value={patient.address || ''}
                   onChange={(e) => setPatient({ ...patient, address: e.target.value })}
                 />
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Date of Birth *</label>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-1">
+                <div className="flex flex-col gap-2">
+                  <label className="font-medium text-[#495057]">Date of Birth *</label>
                   <input
                     type="date"
+                    className="border border-[#ddd] rounded text-base p-3"
                     value={patient.date_of_birth || ''}
                     onChange={(e) => setPatient({ ...patient, date_of_birth: e.target.value })}
                   />
                 </div>
-                <div className="form-group">
-                  <label>Enrollment Date *</label>
+                <div className="flex flex-col gap-2">
+                  <label className="font-medium text-[#495057]">Enrollment Date *</label>
                   <input
                     type="date"
+                    className="border border-[#ddd] rounded text-base p-3"
                     value={patient.enrollment_date || ''}
                     onChange={(e) => setPatient({ ...patient, enrollment_date: e.target.value })}
                   />
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Status *</label>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-1">
+                <div className="flex flex-col gap-2">
+                  <label className="font-medium text-[#495057]">Status *</label>
                   <select
+                    className="border border-[#ddd] rounded text-base p-3"
                     value={patient.status || PatientStatus.ACTIVE}
                     onChange={(e) => setPatient({ ...patient, status: e.target.value as PatientStatus })}
                   >
@@ -229,58 +266,66 @@ const PatientDetail = () => {
                     <option value={PatientStatus.DISCHARGED}>Discharged</option>
                   </select>
                 </div>
-                <div className="form-group">
-                  <label>Care Program</label>
+                <div className="flex flex-col gap-2">
+                  <label className="font-medium text-[#495057]">Care Program</label>
                   <input
                     type="text"
+                    className="border border-[#ddd] rounded text-base p-3"
                     value={patient.care_program || ''}
                     onChange={(e) => setPatient({ ...patient, care_program: e.target.value })}
                   />
                 </div>
               </div>
 
-              <div className="form-actions">
-                <button className="btn btn-primary" onClick={handleSave} disabled={saving}>
+              <div className="flex gap-4 mt-4">
+                <button 
+                  className="px-4 py-2 bg-[#007bff] text-white rounded border-none text-base cursor-pointer transition-colors duration-200 hover:bg-[#0056b3] disabled:opacity-50 disabled:cursor-not-allowed" 
+                  onClick={handleSave} 
+                  disabled={saving}
+                >
                   {saving ? 'Saving...' : isNew ? 'Create Patient' : 'Save Changes'}
                 </button>
                 {!isNew && (
-                  <button className="btn btn-secondary" onClick={() => {
-                    setIsEditing(false)
-                    loadPatientData()
-                  }}>
+                  <button 
+                    className="px-4 py-2 bg-[#6c757d] text-white rounded border-none text-base cursor-pointer transition-colors duration-200 hover:bg-[#5a6268]" 
+                    onClick={() => {
+                      setIsEditing(false)
+                      loadPatientData()
+                    }}
+                  >
                     Cancel
                   </button>
                 )}
               </div>
             </div>
           ) : (
-            <div className="patient-info">
-              <div className="info-row">
-                <span className="info-label">Email:</span>
+            <div className="flex flex-col gap-4">
+              <div className="grid grid-cols-[150px_1fr] gap-4 border-b border-[#f0f0f0] md:grid-cols-1" style={{ padding: '0.5rem 0' }}>
+                <span className="font-medium text-[#6c757d]">Email:</span>
                 <span>{patient.email}</span>
               </div>
-              <div className="info-row">
-                <span className="info-label">Phone:</span>
+              <div className="grid grid-cols-[150px_1fr] gap-4 border-b border-[#f0f0f0] md:grid-cols-1" style={{ padding: '0.5rem 0' }}>
+                <span className="font-medium text-[#6c757d]">Phone:</span>
                 <span>{patient.phone || '—'}</span>
               </div>
-              <div className="info-row">
-                <span className="info-label">Address:</span>
+              <div className="grid grid-cols-[150px_1fr] gap-4 border-b border-[#f0f0f0] md:grid-cols-1" style={{ padding: '0.5rem 0' }}>
+                <span className="font-medium text-[#6c757d]">Address:</span>
                 <span>{patient.address || '—'}</span>
               </div>
-              <div className="info-row">
-                <span className="info-label">Date of Birth:</span>
+              <div className="grid grid-cols-[150px_1fr] gap-4 border-b border-[#f0f0f0] md:grid-cols-1" style={{ padding: '0.5rem 0' }}>
+                <span className="font-medium text-[#6c757d]">Date of Birth:</span>
                 <span>{patient.date_of_birth ? new Date(patient.date_of_birth).toLocaleDateString() : '—'}</span>
               </div>
-              <div className="info-row">
-                <span className="info-label">Enrollment Date:</span>
+              <div className="grid grid-cols-[150px_1fr] gap-4 border-b border-[#f0f0f0] md:grid-cols-1" style={{ padding: '0.5rem 0' }}>
+                <span className="font-medium text-[#6c757d]">Enrollment Date:</span>
                 <span>{patient.enrollment_date ? new Date(patient.enrollment_date).toLocaleDateString() : '—'}</span>
               </div>
-              <div className="info-row">
-                <span className="info-label">Status:</span>
-                <span className={`status-badge ${patient.status}`}>{patient.status}</span>
+              <div className="grid grid-cols-[150px_1fr] gap-4 border-b border-[#f0f0f0] md:grid-cols-1" style={{ padding: '0.5rem 0' }}>
+                <span className="font-medium text-[#6c757d]">Status:</span>
+                <span className={getStatusBadgeClass(patient.status)}>{patient.status}</span>
               </div>
-              <div className="info-row">
-                <span className="info-label">Care Program:</span>
+              <div className="grid grid-cols-[150px_1fr] gap-4 border-b border-[#f0f0f0] md:grid-cols-1" style={{ padding: '0.5rem 0' }}>
+                <span className="font-medium text-[#6c757d]">Care Program:</span>
                 <span>{patient.care_program || '—'}</span>
               </div>
             </div>
@@ -289,27 +334,30 @@ const PatientDetail = () => {
 
         {!isNew && (
           <>
-            <div className="care-team-card">
-              <div className="card-header">
-                <h3>Care Team</h3>
-                <button className="btn btn-primary btn-sm" onClick={() => setShowAssignModal(true)}>
+            <div className="bg-white rounded-lg p-8 shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-[#2c3e50]">Care Team</h3>
+                <button 
+                  className="px-2 py-1 bg-[#007bff] text-white rounded border-none text-sm cursor-pointer transition-colors duration-200 hover:bg-[#0056b3]" 
+                  onClick={() => setShowAssignModal(true)}
+                >
                   + Assign Member
                 </button>
               </div>
               {careTeamAssignments.length === 0 ? (
-                <div className="empty-state">No care team members assigned</div>
+                <div className="text-center py-8 text-[#6c757d]">No care team members assigned</div>
               ) : (
-                <div className="care-team-list">
+                <div className="flex flex-col gap-4">
                   {careTeamAssignments.map((assignment) => (
-                    <div key={assignment.id} className="care-team-item">
-                      <div>
+                    <div key={assignment.id} className="p-4 border border-[#e0e0e0] rounded flex justify-between items-center md:flex-col md:items-start md:gap-4">
+                      <div className="flex items-center gap-3">
                         <strong>{assignment.care_team_member.first_name} {assignment.care_team_member.last_name}</strong>
-                        <span className="role-badge">{assignment.care_team_member.role}</span>
+                        <span className="px-2 py-1 bg-[#e9ecef] rounded text-sm text-[#495057]">{assignment.care_team_member.role}</span>
                       </div>
-                      <div className="care-team-meta">
+                      <div className="flex items-center gap-4">
                         <span>Assigned: {new Date(assignment.assigned_date).toLocaleDateString()}</span>
                         <button
-                          className="btn btn-danger btn-sm"
+                          className="px-2 py-1 bg-[#dc3545] text-white rounded border-none text-sm cursor-pointer transition-colors duration-200 hover:bg-[#c82333]"
                           onClick={() => handleUnassign(assignment.id)}
                         >
                           Unassign
@@ -321,26 +369,26 @@ const PatientDetail = () => {
               )}
             </div>
 
-            <div className="health-screenings-card">
-              <h3>Health Screening Trends</h3>
+            <div className="bg-white rounded-lg p-8 shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+              <h3 className="text-[#2c3e50]">Health Screening Trends</h3>
               {healthScreenings.length === 0 ? (
-                <div className="empty-state">No health screening data available</div>
+                <div className="text-center py-8 text-[#6c757d]">No health screening data available</div>
               ) : (
                 <>
                   <HealthScreeningChart screenings={healthScreenings} />
-                  <div className="screenings-table">
-                    <table>
+                  <div className="mt-8">
+                    <table className="w-full border-collapse">
                       <thead>
                         <tr>
-                          <th>Date</th>
-                          <th>Score</th>
+                          <th className="p-3 text-left border-b border-[#e0e0e0] bg-[#f8f9fa] font-semibold">Date</th>
+                          <th className="p-3 text-left border-b border-[#e0e0e0] bg-[#f8f9fa] font-semibold">Score</th>
                         </tr>
                       </thead>
                       <tbody>
                         {healthScreenings.map((screening) => (
                           <tr key={screening.id}>
-                            <td>{new Date(screening.screening_date).toLocaleDateString()}</td>
-                            <td className={screening.score >= 7 ? 'score-high' : screening.score >= 4 ? 'score-medium' : 'score-low'}>
+                            <td className="p-3 text-left border-b border-[#e0e0e0]">{new Date(screening.screening_date).toLocaleDateString()}</td>
+                            <td className={`p-3 text-left border-b border-[#e0e0e0] ${getScoreClass(screening.score)}`}>
                               {screening.score.toFixed(1)}
                             </td>
                           </tr>
@@ -356,12 +404,20 @@ const PatientDetail = () => {
       </div>
 
       {showAssignModal && (
-        <div className="modal-overlay" onClick={() => setShowAssignModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3>Assign Care Team Member</h3>
-            <div className="form-group">
-              <label>Select Member</label>
+        <div 
+          className="fixed inset-0 flex justify-center items-center z-[1000]" 
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+          onClick={() => setShowAssignModal(false)}
+        >
+          <div 
+            className="bg-white p-8 rounded-lg max-w-[500px] w-[90%] max-h-[90vh] overflow-y-auto" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="mb-6 text-[#2c3e50]">Assign Care Team Member</h3>
+            <div className="flex flex-col gap-2">
+              <label className="font-medium text-[#495057]">Select Member</label>
               <select
+                className="border border-[#ddd] rounded text-base p-3"
                 value={selectedMemberId}
                 onChange={(e) => setSelectedMemberId(e.target.value ? parseInt(e.target.value) : '')}
               >
@@ -374,13 +430,20 @@ const PatientDetail = () => {
               </select>
             </div>
             {getAvailableMembersForAssignment().length === 0 && (
-              <p className="text-muted">All available members are already assigned</p>
+              <p className="text-[#6c757d] text-sm mt-2">All available members are already assigned</p>
             )}
-            <div className="modal-actions">
-              <button className="btn btn-primary" onClick={handleAssign} disabled={!selectedMemberId}>
+            <div className="flex gap-4 mt-6 justify-end">
+              <button 
+                className="px-4 py-2 bg-[#007bff] text-white rounded border-none text-base cursor-pointer transition-colors duration-200 hover:bg-[#0056b3] disabled:opacity-50 disabled:cursor-not-allowed" 
+                onClick={handleAssign} 
+                disabled={!selectedMemberId}
+              >
                 Assign
               </button>
-              <button className="btn btn-secondary" onClick={() => setShowAssignModal(false)}>
+              <button 
+                className="px-4 py-2 bg-[#6c757d] text-white rounded border-none text-base cursor-pointer transition-colors duration-200 hover:bg-[#5a6268]" 
+                onClick={() => setShowAssignModal(false)}
+              >
                 Cancel
               </button>
             </div>
